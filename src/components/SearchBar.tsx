@@ -1,12 +1,15 @@
 import { useState } from "react";
-import { FiSearch, FiMapPin } from "react-icons/fi";
+import { Search, MapPin, Loader2 } from "lucide-react";
+import { Button } from "./ui/button";
+import { Input } from "./ui/input";
 
 type Props = {
   onSearch: (city: string) => void;
   onUseLocation?: () => void;
+  loading?: boolean;
 };
 
-export default function SearchBar({ onSearch, onUseLocation }: Props) {
+export default function SearchBar({ onSearch, onUseLocation, loading }: Props) {
   const [city, setCity] = useState("");
 
   function submit(e: React.FormEvent) {
@@ -16,32 +19,44 @@ export default function SearchBar({ onSearch, onUseLocation }: Props) {
   }
 
   return (
-    <form onSubmit={submit} className="flex w-full max-w-xl mx-auto gap-2">
-      <div className="flex-1 relative">
-        <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-        <input
-          value={city}
-          onChange={(e) => setCity(e.target.value)}
-          placeholder="Search city..."
-          className="w-full rounded-xl pl-10 pr-4 py-3 bg-white/10 backdrop-blur border border-white/20 text-white placeholder:text-gray-300 focus:outline-none focus:ring-2 focus:ring-white/40"
-        />
-      </div>
-      <button
-        type="submit"
-        className="px-4 py-3 rounded-xl bg-white/20 text-white hover:bg-white/30 transition"
-      >
-        Get Weather
-      </button>
-      {onUseLocation && (
-        <button
-          type="button"
-          onClick={onUseLocation}
-          title="Use my location"
-          className="px-3 py-3 rounded-xl bg-white/10 text-white hover:bg-white/20 transition"
+    <div className="w-full max-w-2xl mx-auto">
+      <form onSubmit={submit} className="flex gap-3">
+        <div className="flex-1 relative">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Input
+            value={city}
+            onChange={(e) => setCity(e.target.value)}
+            placeholder="Search for a city..."
+            className="pl-10 h-12 text-lg bg-white/10 border-white/20 text-white placeholder:text-white/60 focus:bg-white/20 transition-all duration-300"
+            disabled={loading}
+          />
+        </div>
+        <Button
+          type="submit"
+          size="lg"
+          className="h-12 px-6 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-semibold transition-all duration-300 shadow-lg hover:shadow-xl"
+          disabled={loading}
         >
-          <FiMapPin />
-        </button>
-      )}
-    </form>
+          {loading ? (
+            <Loader2 className="h-4 w-4 animate-spin" />
+          ) : (
+            "Get Weather"
+          )}
+        </Button>
+        {onUseLocation && (
+          <Button
+            type="button"
+            variant="outline"
+            size="lg"
+            onClick={onUseLocation}
+            title="Use my location"
+            className="h-12 px-4 bg-white/10 border-white/20 text-white hover:bg-white/20 transition-all duration-300"
+            disabled={loading}
+          >
+            <MapPin className="h-5 w-5" />
+          </Button>
+        )}
+      </form>
+    </div>
   );
 }

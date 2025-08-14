@@ -4,6 +4,7 @@ import type { Coordinates } from "../types/weather";
 export function useGeolocation() {
   const [coords, setCoords] = useState<Coordinates | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (!("geolocation" in navigator)) {
@@ -11,21 +12,24 @@ export function useGeolocation() {
       return;
     }
 
-    const watchId = navigator.geolocation.getCurrentPosition(
+    setLoading(true);
+
+    navigator.geolocation.getCurrentPosition(
       (pos) => {
         setCoords({ lat: pos.coords.latitude, lon: pos.coords.longitude });
+        setLoading(false);
       },
       (err) => {
         setError(err.message || "Failed to get location");
+        setLoading(false);
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 60000,
       }
-    ) as unknown as number;
-
-    return () => {
-      if (watchId && "clearWatch" in navigator.geolocation) {
-        navigator.geolocation.clearWatch(watchId);
-      }
-    };
+    );
   }, []);
 
-  return { coords, error };
+  return { coords, error, loading };
 }

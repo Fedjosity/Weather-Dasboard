@@ -1,3 +1,4 @@
+import { Card, CardContent } from "./ui/card";
 import type { ForecastItem } from "../types/weather";
 
 export default function ForecastCard({ item }: { item: ForecastItem }) {
@@ -6,23 +7,36 @@ export default function ForecastCard({ item }: { item: ForecastItem }) {
   const description = item.weather?.[0]?.description;
 
   return (
-    <div className="rounded-xl p-4 bg-white/10 border border-white/20 backdrop-blur text-white">
-      <div className="text-sm text-white/80">
-        {date.toLocaleDateString(undefined, { weekday: "short" })}
-      </div>
-      <div className="flex items-center gap-2 mt-2">
-        {icon && (
-          <img
-            src={`https://openweathermap.org/img/wn/${icon}.png`}
-            alt={description}
-            className="w-8 h-8"
-          />
-        )}
-        <div className="text-lg font-semibold">
-          {Math.round(item.main.temp)}°C
+    <Card className="glass border-white/20 shadow-glass hover:scale-105 transition-all duration-300 cursor-pointer group">
+      <CardContent className="p-4">
+        <div className="text-center space-y-3">
+          {/* Day */}
+          <div className="text-white/90 font-semibold text-sm">
+            {date.toLocaleDateString(undefined, { weekday: "short" })}
+          </div>
+
+          {/* Weather Icon */}
+          {icon && (
+            <div className="group-hover:scale-110 transition-transform duration-300">
+              <img
+                src={`https://openweathermap.org/img/wn/${icon}@2x.png`}
+                alt={description}
+                className="w-12 h-12 mx-auto drop-shadow-md"
+              />
+            </div>
+          )}
+
+          {/* Temperature */}
+          <div className="text-2xl font-bold text-white">
+            {Math.round(item.main.temp)}°C
+          </div>
+
+          {/* Description */}
+          <div className="text-xs capitalize text-white/70 leading-tight">
+            {description}
+          </div>
         </div>
-      </div>
-      <div className="text-xs capitalize text-white/70">{description}</div>
-    </div>
+      </CardContent>
+    </Card>
   );
 }
